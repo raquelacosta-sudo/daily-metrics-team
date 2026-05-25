@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width,initial-scale=1.0">
-<title>Monitor KPIs — Raquel Acosta · Rappi MX</title>
+<title>Monitor KPIs â Raquel Acosta Â· Rappi MX</title>
 <script src="https://cdn.jsdelivr.net/npm/chart.js@4.5.1" integrity="sha384-jb8JQMbMoBUzgWatfe6COACi2ljcDdZQ2OxczGA3bGNeWe+6DChMTBJemed7ZnvJ" crossorigin="anonymous"></script>
 <style>
 *{margin:0;padding:0;box-sizing:border-box}
@@ -50,9 +50,9 @@ body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,sans-serif;b
 .section-title{font-size:12px;font-weight:700;color:#1a1a2e;margin:18px 0 10px;display:flex;align-items:center;gap:8px;text-transform:uppercase;letter-spacing:.5px}
 .section-title::after{content:'';flex:1;height:1px;background:#e8eaed}
 
-/* ═══════════════════════════════
+/* âââââââââââââââââââââââââââââââ
    BRAND ALERTS TAB
-═══════════════════════════════ */
+âââââââââââââââââââââââââââââââ */
 .brand-toolbar{background:#fff;border-radius:10px;padding:14px 18px;margin-bottom:14px;box-shadow:0 1px 4px rgba(0,0,0,.08);display:flex;flex-wrap:wrap;gap:12px;align-items:center}
 .brand-toolbar label{font-size:11px;font-weight:600;color:#555}
 .toggle-group{display:flex;gap:0;border-radius:20px;overflow:hidden;border:1.5px solid #ff441f}
@@ -108,8 +108,8 @@ body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,sans-serif;b
 
 <div class="header">
   <div>
-    <h1>📊 Monitor KPIs Equipo — Raquel Acosta · Rappi MX</h1>
-    <div style="font-size:10px;opacity:.8;margin-top:2px">Datos reales Snowflake · 874 días · 6 KAMs · 182 marcas</div>
+    <h1>ð Monitor KPIs Equipo â Raquel Acosta Â· Rappi MX</h1>
+    <div style="font-size:10px;opacity:.8;margin-top:2px">Datos reales Snowflake Â· 874 dÃ­as Â· 6 KAMs Â· 182 marcas</div>
   </div>
   <div class="header-meta">
     <div>Actualizado: <strong>23 May 2026</strong></div>
@@ -118,56 +118,56 @@ body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,sans-serif;b
 </div>
 
 <div class="tabs">
-  <div class="tab active"  onclick="showTab('wtd',this)">⚡ WTD Equipo</div>
-  <div class="tab"         onclick="showTab('mtd',this)">📅 MTD Equipo</div>
-  <div class="tab"         onclick="showTab('brands',this)">🔔 Alertas por Marca</div>
-  <div class="tab"         onclick="showTab('trends',this)">📈 Tendencias 90d</div>
-  <div class="tab"         onclick="showTab('pareto',this)">🎯 Pareto por KAM</div>
+  <div class="tab active"  onclick="showTab('wtd',this)">â¡ WTD Equipo</div>
+  <div class="tab"         onclick="showTab('mtd',this)">ð MTD Equipo</div>
+  <div class="tab"         onclick="showTab('brands',this)">ð Alertas por Marca</div>
+  <div class="tab"         onclick="showTab('trends',this)">ð Tendencias 90d</div>
+  <div class="tab"         onclick="showTab('pareto',this)">ð¯ Pareto por KAM</div>
 </div>
 
-<!-- ══════════ WTD ══════════ -->
+<!-- ââââââââââ WTD ââââââââââ -->
 <div id="tab-wtd" class="tab-panel active container">
   <div class="period-banner">
-    <span>📆 Semana actual: <strong>Lun 18 May → Sáb 23 May 2026</strong> (6 días)</span>
-    <span>🔁 vs semana anterior: <strong>Lun 11 May → Sáb 16 May 2026</strong></span>
+    <span>ð Semana actual: <strong>Lun 18 May â SÃ¡b 23 May 2026</strong> (6 dÃ­as)</span>
+    <span>ð vs semana anterior: <strong>Lun 11 May â SÃ¡b 16 May 2026</strong></span>
   </div>
   <div class="legend">
     <span style="font-size:10px;font-weight:600;color:#555">Alertas:</span>
-    <div class="legend-item"><div class="legend-dot" style="background:#e74c3c"></div>Caída crítica &gt;15%</div>
-    <div class="legend-item"><div class="legend-dot" style="background:#f39c12"></div>Caída moderada 5–15%</div>
+    <div class="legend-item"><div class="legend-dot" style="background:#e74c3c"></div>CaÃ­da crÃ­tica &gt;15%</div>
+    <div class="legend-item"><div class="legend-dot" style="background:#f39c12"></div>CaÃ­da moderada 5â15%</div>
     <div class="legend-item"><div class="legend-dot" style="background:#27ae60"></div>Estable / mejora</div>
   </div>
   <div id="wtd-kpis" class="kpi-grid"></div>
   <div class="section-title">Detalle diario</div>
   <div class="charts-grid">
-    <div class="chart-card"><div class="chart-title">Órdenes <small>actual vs sem. ant.</small></div><div class="chart-wrap"><canvas id="wc-orders"></canvas></div></div>
+    <div class="chart-card"><div class="chart-title">Ãrdenes <small>actual vs sem. ant.</small></div><div class="chart-wrap"><canvas id="wc-orders"></canvas></div></div>
     <div class="chart-card"><div class="chart-title">GMV MXN <small>actual vs sem. ant.</small></div><div class="chart-wrap"><canvas id="wc-gmv"></canvas></div></div>
     <div class="chart-card"><div class="chart-title">CVR % <small>actual vs sem. ant.</small></div><div class="chart-wrap"><canvas id="wc-cvr"></canvas></div></div>
     <div class="chart-card"><div class="chart-title">Cancel Rate % <small>actual vs sem. ant.</small></div><div class="chart-wrap"><canvas id="wc-cancel"></canvas></div></div>
   </div>
 </div>
 
-<!-- ══════════ MTD ══════════ -->
+<!-- ââââââââââ MTD ââââââââââ -->
 <div id="tab-mtd" class="tab-panel container">
   <div class="period-banner">
-    <span>📆 Mes actual: <strong>1 May → 23 May 2026</strong> (23 días)</span>
-    <span>🔁 vs mismo periodo mes anterior: <strong>1 Abr → 23 Abr 2026</strong></span>
+    <span>ð Mes actual: <strong>1 May â 23 May 2026</strong> (23 dÃ­as)</span>
+    <span>ð vs mismo periodo mes anterior: <strong>1 Abr â 23 Abr 2026</strong></span>
   </div>
   <div class="legend">
     <span style="font-size:10px;font-weight:600;color:#555">Alertas:</span>
-    <div class="legend-item"><div class="legend-dot" style="background:#e74c3c"></div>Caída crítica &gt;15%</div>
-    <div class="legend-item"><div class="legend-dot" style="background:#f39c12"></div>Caída moderada 5–15%</div>
+    <div class="legend-item"><div class="legend-dot" style="background:#e74c3c"></div>CaÃ­da crÃ­tica &gt;15%</div>
+    <div class="legend-item"><div class="legend-dot" style="background:#f39c12"></div>CaÃ­da moderada 5â15%</div>
     <div class="legend-item"><div class="legend-dot" style="background:#27ae60"></div>Estable / mejora</div>
   </div>
   <div id="mtd-kpis" class="kpi-grid"></div>
   <div class="section-title">Acumulado mensual</div>
   <div class="charts-grid">
-    <div class="chart-card"><div class="chart-title">GMV acumulado <small>May vs Abr día a día</small></div><div class="chart-wrap"><canvas id="mc-gmv"></canvas></div></div>
-    <div class="chart-card"><div class="chart-title">Órdenes acumuladas <small>May vs Abr</small></div><div class="chart-wrap"><canvas id="mc-orders"></canvas></div></div>
+    <div class="chart-card"><div class="chart-title">GMV acumulado <small>May vs Abr dÃ­a a dÃ­a</small></div><div class="chart-wrap"><canvas id="mc-gmv"></canvas></div></div>
+    <div class="chart-card"><div class="chart-title">Ãrdenes acumuladas <small>May vs Abr</small></div><div class="chart-wrap"><canvas id="mc-orders"></canvas></div></div>
   </div>
 </div>
 
-<!-- ══════════ ALERTAS POR MARCA ══════════ -->
+<!-- ââââââââââ ALERTAS POR MARCA ââââââââââ -->
 <div id="tab-brands" class="tab-panel container">
   <div class="brand-toolbar">
     <div>
@@ -184,15 +184,15 @@ body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,sans-serif;b
     <div>
       <label>Ordenar por</label><br>
       <select class="sort-select" id="brand-sort" onchange="renderBrandTable()" style="margin-top:4px">
-        <option value="gmv_delta">GMV Δ% (mayor caída)</option>
+        <option value="gmv_delta">GMV Î% (mayor caÃ­da)</option>
         <option value="gmv_curr">GMV actual (mayor)</option>
-        <option value="orders_delta">Órdenes Δ%</option>
+        <option value="orders_delta">Ãrdenes Î%</option>
         <option value="brand_name">Nombre marca</option>
       </select>
     </div>
     <div style="margin-left:auto;font-size:10px;color:#888;line-height:1.6">
-      🔴 Caída crítica &gt;15% &nbsp;|&nbsp; 🟠 Moderada 5–15% &nbsp;|&nbsp; 🟢 Estable/sube<br>
-      WTD: Lun 18–Sáb 23 Mayo vs Lun 11–Sáb 16 Mayo &nbsp;|&nbsp; MTD: 1–23 Mayo vs 1–23 Abr
+      ð´ CaÃ­da crÃ­tica &gt;15% &nbsp;|&nbsp; ð  Moderada 5â15% &nbsp;|&nbsp; ð¢ Estable/sube<br>
+      WTD: Lun 18âSÃ¡b 23 Mayo vs Lun 11âSÃ¡b 16 Mayo &nbsp;|&nbsp; MTD: 1â23 Mayo vs 1â23 Abr
     </div>
   </div>
 
@@ -200,14 +200,14 @@ body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,sans-serif;b
   <div class="brand-table-wrap">
     <table class="brand-table" id="brand-table">
       <thead><tr>
-        <th onclick="sortBy('brand_name')">Marca ↕</th>
-        <th onclick="sortBy('kam_nombre')">KAM ↕</th>
-        <th onclick="sortBy('gmv_curr')">GMV Actual ↕</th>
-        <th onclick="sortBy('gmv_delta')">GMV Δ% ↕</th>
-        <th onclick="sortBy('orders_curr')">Órdenes ↕</th>
-        <th onclick="sortBy('orders_delta')">Órdenes Δ% ↕</th>
-        <th onclick="sortBy('cancel_curr')">Cancel % ↕</th>
-        <th onclick="sortBy('defect_curr')">Defect % ↕</th>
+        <th onclick="sortBy('brand_name')">Marca â</th>
+        <th onclick="sortBy('kam_nombre')">KAM â</th>
+        <th onclick="sortBy('gmv_curr')">GMV Actual â</th>
+        <th onclick="sortBy('gmv_delta')">GMV Î% â</th>
+        <th onclick="sortBy('orders_curr')">Ãrdenes â</th>
+        <th onclick="sortBy('orders_delta')">Ãrdenes Î% â</th>
+        <th onclick="sortBy('cancel_curr')">Cancel % â</th>
+        <th onclick="sortBy('defect_curr')">Defect % â</th>
         <th>Alerta</th>
       </tr></thead>
       <tbody id="brand-tbody"></tbody>
@@ -215,28 +215,28 @@ body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,sans-serif;b
   </div>
 </div>
 
-<!-- ══════════ TENDENCIAS ══════════ -->
+<!-- ââââââââââ TENDENCIAS ââââââââââ -->
 <div id="tab-trends" class="tab-panel container">
   <div class="period-banner">
-    <span>📆 Últimos 90 días: <strong>23 Feb → 23 May 2026</strong> · con MA7</span>
+    <span>ð Ãltimos 90 dÃ­as: <strong>23 Feb â 23 May 2026</strong> Â· con MA7</span>
   </div>
   <div class="charts-grid" style="grid-template-columns:repeat(auto-fill,minmax(420px,1fr))">
-    <div class="chart-card"><div class="chart-title">Órdenes + MA7</div><div class="chart-wrap"><canvas id="t-orders"></canvas></div></div>
+    <div class="chart-card"><div class="chart-title">Ãrdenes + MA7</div><div class="chart-wrap"><canvas id="t-orders"></canvas></div></div>
     <div class="chart-card"><div class="chart-title">GMV MXN + MA7</div><div class="chart-wrap"><canvas id="t-gmv"></canvas></div></div>
     <div class="chart-card"><div class="chart-title">AOV MXN</div><div class="chart-wrap"><canvas id="t-aov"></canvas></div></div>
     <div class="chart-card"><div class="chart-title">Traffic SS + MA7</div><div class="chart-wrap"><canvas id="t-traffic"></canvas></div></div>
     <div class="chart-card"><div class="chart-title">CVR %</div><div class="chart-wrap"><canvas id="t-cvr"></canvas></div></div>
     <div class="chart-card"><div class="chart-title">Cancel % / Defect %</div><div class="chart-wrap"><canvas id="t-ops"></canvas></div></div>
     <div class="chart-card"><div class="chart-title">Revenue MXN</div><div class="chart-wrap"><canvas id="t-revenue"></canvas></div></div>
-    <div class="chart-card"><div class="chart-title">Comisión % / MKD %</div><div class="chart-wrap"><canvas id="t-pnl"></canvas></div></div>
+    <div class="chart-card"><div class="chart-title">ComisiÃ³n % / MKD %</div><div class="chart-wrap"><canvas id="t-pnl"></canvas></div></div>
   </div>
 </div>
 
-<!-- ══════════ PARETO ══════════ -->
+<!-- ââââââââââ PARETO ââââââââââ -->
 <div id="tab-pareto" class="tab-panel container">
   <div class="period-banner">
-    <span>📆 <strong>1 May → 23 May 2026</strong> · Pareto 80% GMV por KAM</span>
-    <span>Barras <span style="color:#ff441f;font-weight:700">rojas</span> = Pareto · <span style="color:#bdc3c7;font-weight:700">grises</span> = cola larga</span>
+    <span>ð <strong>1 May â 23 May 2026</strong> Â· Pareto 80% GMV por KAM</span>
+    <span>Barras <span style="color:#ff441f;font-weight:700">rojas</span> = Pareto Â· <span style="color:#bdc3c7;font-weight:700">grises</span> = cola larga</span>
   </div>
   <div class="section-title">Resumen KAMs</div>
   <div id="pareto-summary" class="pareto-summary"></div>
@@ -248,9 +248,9 @@ body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,sans-serif;b
 const _DATA_URL = './monitor_data.json';
 let DATA=[], PARETO_DATA=[], WTD_BRANDS=[], _META={};
 
-// ══════════════════════════════════
+// ââââââââââââââââââââââââââââââââââ
 // DATOS
-// ══════════════════════════════════
+// ââââââââââââââââââââââââââââââââââ
 
 
 
@@ -258,11 +258,11 @@ let DATA=[], PARETO_DATA=[], WTD_BRANDS=[], _META={};
 // MTD brands from pareto (already MTD)
 let MTD_BRANDS = [];
 
-// ══════════════════════════════════
+// ââââââââââââââââââââââââââââââââââ
 // UTILS
-// ══════════════════════════════════
+// ââââââââââââââââââââââââââââââââââ
 function fmt(v, type) {
-  if (v===null||v===undefined||isNaN(v)) return '—';
+  if (v===null||v===undefined||isNaN(v)) return 'â';
   if (type==='currency') {
     if (Math.abs(v)>=1e6) return '$'+(v/1e6).toFixed(1)+'M';
     if (Math.abs(v)>=1e3) return '$'+(v/1e3).toFixed(0)+'K';
@@ -288,8 +288,11 @@ function showTab(name,el){
 }
 function _initTab(name){
   if(name==='mtd'){
-      renderKPIs('mtd-kpis',mtdC,mtdP);
+    const mc=_META.mtd_curr||['2026-05-01','2026-05-23'],mp=_META.mtd_prev||['2026-04-01','2026-04-23'];
+    const mtdC=filter(mc[0],mc[1]),mtdP=filter(mp[0],mp[1]);
+    renderKPIs('mtd-kpis',mtdC,mtdP);
     lineCumul('mc-gmv',mtdC,mtdP,'GMV_MXN','currency');
+    lineCumul('mc-orders',mtdC,mtdP,'ORDERS','number');
     }
   if(name==='trends'){
     const t90=filter(_META.t90_start||'2026-02-23',_META.t90_end||'2026-05-23');
@@ -303,11 +306,11 @@ function _initTab(name){
   if(name==='pareto'){buildPareto();}
 }
 
-// ══════════════════════════════════
+// ââââââââââââââââââââââââââââââââââ
 // TEAM KPI METRICS
-// ══════════════════════════════════
+// ââââââââââââââââââââââââââââââââââ
 const METRICS=[
-  {col:'ORDERS',             label:'Órdenes',          agg:'sum',fmt:'number',  inv:false,w:5, c:15},
+  {col:'ORDERS',             label:'Ãrdenes',          agg:'sum',fmt:'number',  inv:false,w:5, c:15},
   {col:'GMV_MXN',            label:'GMV MXN',           agg:'sum',fmt:'currency',inv:false,w:5, c:15},
   {col:'SALES_USD',          label:'Sales USD',         agg:'sum',fmt:'currency',inv:false,w:5, c:15},
   {col:'AOV_MXN',            label:'AOV MXN',           agg:'avg',fmt:'currency',inv:false,w:5, c:10},
@@ -315,7 +318,7 @@ const METRICS=[
   {col:'TRAFFIC_SS',         label:'Traffic SS',        agg:'sum',fmt:'number',  inv:false,w:5, c:15},
   {col:'CVR_PCT',            label:'CVR %',             agg:'avg',fmt:'pct',     inv:false,w:5, c:10},
   {col:'REVENUE_MXN',        label:'Revenue MXN',       agg:'sum',fmt:'currency',inv:false,w:10,c:20},
-  {col:'COMMISSION_PCT',     label:'Comisión %',        agg:'avg',fmt:'pct',     inv:false,w:5, c:10},
+  {col:'COMMISSION_PCT',     label:'ComisiÃ³n %',        agg:'avg',fmt:'pct',     inv:false,w:5, c:10},
   {col:'CANCEL_RATE_PCT',    label:'Cancel Rate %',     agg:'avg',fmt:'pct',     inv:true, w:10,c:20},
   {col:'DEFECT_RATE_PCT',    label:'Defect Rate %',     agg:'avg',fmt:'pct',     inv:true, w:5, c:10},
   {col:'MKD_PCT_GMV',        label:'MKD % GMV',         agg:'avg',fmt:'pct',     inv:true, w:10,c:20},
@@ -330,20 +333,20 @@ function renderKPIs(id,curr,prev){
     const c=getVal(curr,m),p=getVal(prev,m),d=pct(c,p);
     const cc=cardClass(d,m),dc=deltaClass(d,m);
     const sign=d!==null&&d>=0?'+':'';
-    const arr=d===null?'':m.inv?(d>0?'▲ ':'▼ '):(d>=0?'▲ ':'▼ ');
+    const arr=d===null?'':m.inv?(d>0?'â² ':'â¼ '):(d>=0?'â² ':'â¼ ');
     return `<div class="kpi-card ${cc}">
       <div class="kpi-label">${m.label}</div>
       <div class="kpi-value">${fmt(c,m.fmt)}</div>
       <div class="kpi-sub">prev: ${fmt(p,m.fmt)}</div>
-      <div class="kpi-delta ${dc}">${d!==null?arr+sign+d.toFixed(1)+'%':'—'}</div>
+      <div class="kpi-delta ${dc}">${d!==null?arr+sign+d.toFixed(1)+'%':'â'}</div>
     </div>`;
   }).join('');
 }
 
-// ══════════════════════════════════
+// ââââââââââââââââââââââââââââââââââ
 // COMPARISON CHARTS
-// ══════════════════════════════════
-const DAYS=['Lun','Mar','Mié','Jue','Vie','Sáb','Dom'];
+// ââââââââââââââââââââââââââââââââââ
+const DAYS=['Lun','Mar','MiÃ©','Jue','Vie','SÃ¡b','Dom'];
 function dayLbl(f){const d=new Date(f+'T12:00:00');return DAYS[d.getDay()===0?6:d.getDay()-1]+' '+d.getDate();}
 function barCompare(id,curr,prev,col,ft){
   const ctx=document.getElementById(id);if(!ctx)return;
@@ -362,7 +365,7 @@ function lineCumul(id,curr,prev,col,ft){
   const ctx=document.getElementById(id);if(!ctx)return;
   let cc=0,cp=0;
   new Chart(ctx,{type:'line',data:{
-    labels:curr.map((_,i)=>'Día '+(i+1)),
+    labels:curr.map((_,i)=>'DÃ­a '+(i+1)),
     datasets:[
       {label:'Mayo 2026',data:curr.map(r=>{cc+=(r[col]||0);return cc;}),borderColor:'#ff441f',backgroundColor:'#ff441f18',fill:true,tension:.3,borderWidth:2,pointRadius:1},
       {label:'Abr 2026', data:prev.map(r=>{cp+=(r[col]||0);return cp;}),borderColor:'#bdc3c7',borderDash:[5,4],tension:.3,borderWidth:2,pointRadius:1,fill:false}
@@ -386,9 +389,9 @@ function trendLine(id,recs,col,ft,withMA,extra){
       y:{ticks:{callback:v=>fmt(v,ft),font:{size:9}}}}}});
 }
 
-// ══════════════════════════════════
+// ââââââââââââââââââââââââââââââââââ
 // BRAND ALERTS
-// ══════════════════════════════════
+// ââââââââââââââââââââââââââââââââââ
 let brandView='wtd';
 let activeKAM='all';
 let brandSortCol='gmv_delta';
@@ -430,9 +433,9 @@ function renderBrandSummary(data){
   const green=data.filter(r=>alertLvl(r.GMV_DELTA_PCT)==='green'&&r.GMV_DELTA_PCT!==null).length;
   const totalGMV=data.reduce((s,r)=>s+(r.GMV_CURR||0),0);
   document.getElementById('brand-summary').innerHTML=`
-    <div class="alert-stat"><div class="num red">${red}</div><div class="lbl">🔴 Caída crítica &gt;15%</div></div>
-    <div class="alert-stat"><div class="num orange">${orange}</div><div class="lbl">🟠 Caída moderada 5–15%</div></div>
-    <div class="alert-stat"><div class="num green">${green}</div><div class="lbl">🟢 Estable / subiendo</div></div>
+    <div class="alert-stat"><div class="num red">${red}</div><div class="lbl">ð´ CaÃ­da crÃ­tica &gt;15%</div></div>
+    <div class="alert-stat"><div class="num orange">${orange}</div><div class="lbl">ð  CaÃ­da moderada 5â15%</div></div>
+    <div class="alert-stat"><div class="num green">${green}</div><div class="lbl">ð¢ Estable / subiendo</div></div>
     <div class="alert-stat"><div class="num" style="color:#1a1a2e;font-size:22px">${fmt(totalGMV,'currency')}</div><div class="lbl">GMV Total ${brandView.toUpperCase()}</div></div>
     <div class="alert-stat"><div class="num" style="color:#1a1a2e;font-size:22px">${data.length}</div><div class="lbl">Marcas activas</div></div>
   `;
@@ -462,12 +465,12 @@ function renderBrandTable(){
       <td><div class="brand-name">${r.BRAND_NAME}</div></td>
       <td style="font-size:10px;color:#888">${r.KAM_NOMBRE||''}</td>
       <td><div class="gmv-bar-wrap"><div class="gmv-bar" style="width:${barW}px"></div><span>${fmt(r.GMV_CURR,'currency')}</span></div></td>
-      <td><span class="badge ${lvl}">${r.GMV_DELTA_PCT!=null?gmvSign+r.GMV_DELTA_PCT.toFixed(1)+'%':'—'}</span></td>
+      <td><span class="badge ${lvl}">${r.GMV_DELTA_PCT!=null?gmvSign+r.GMV_DELTA_PCT.toFixed(1)+'%':'â'}</span></td>
       <td>${fmt(r.ORDERS_CURR,'number')}</td>
-      <td><span class="badge ${alertLvl(r.ORDERS_DELTA_PCT)}">${r.ORDERS_DELTA_PCT!=null?ordSign+r.ORDERS_DELTA_PCT.toFixed(1)+'%':'—'}</span></td>
-      <td>${r.CANCEL_CURR_PCT!=null?r.CANCEL_CURR_PCT.toFixed(1)+'%':'—'}</td>
-      <td>${r.DEFECT_CURR_PCT!=null?r.DEFECT_CURR_PCT.toFixed(1)+'%':'—'}</td>
-      <td><span style="font-size:16px">${lvl==='red'?'🔴':lvl==='orange'?'🟠':'🟢'}</span></td>
+      <td><span class="badge ${alertLvl(r.ORDERS_DELTA_PCT)}">${r.ORDERS_DELTA_PCT!=null?ordSign+r.ORDERS_DELTA_PCT.toFixed(1)+'%':'â'}</span></td>
+      <td>${r.CANCEL_CURR_PCT!=null?r.CANCEL_CURR_PCT.toFixed(1)+'%':'â'}</td>
+      <td>${r.DEFECT_CURR_PCT!=null?r.DEFECT_CURR_PCT.toFixed(1)+'%':'â'}</td>
+      <td><span style="font-size:16px">${lvl==='red'?'ð´':lvl==='orange'?'ð ':'ð¢'}</span></td>
     </tr>`;
   }).join('');
 }
@@ -489,9 +492,9 @@ function setKAM(email,el){
   renderBrandTable();
 }
 
-// ══════════════════════════════════
+// ââââââââââââââââââââââââââââââââââ
 // PARETO
-// ══════════════════════════════════
+// ââââââââââââââââââââââââââââââââââ
 function buildPareto(){
   const kams={};
   PARETO_DATA.forEach(r=>{
@@ -513,7 +516,7 @@ function buildPareto(){
         <span>GMV MTD: <strong>${fmt(total,'currency')}</strong></span>
         <span>Marcas: <strong>${sorted.length}</strong></span>
       </div>
-      <div class="kam-pareto">🎯 ${p80} marcas = 80% GMV</div>
+      <div class="kam-pareto">ð¯ ${p80} marcas = 80% GMV</div>
     </div>`;
   }).join('');
   const chartsEl=document.getElementById('pareto-charts');
@@ -529,12 +532,12 @@ function buildPareto(){
     div.className='pareto-chart-card';
     div.id='kam-'+email.replace(/[@.]/g,'_');
     div.innerHTML=`<h3 style="color:${color}">${kam.nombre.split(' ').map(w=>w[0]+w.slice(1).toLowerCase()).join(' ')}</h3>
-      <div class="meta">${email} · ${sorted.length} marcas · <strong>${p80} = 80% GMV</strong> · Total: ${fmt(total,'currency')}</div>
+      <div class="meta">${email} Â· ${sorted.length} marcas Â· <strong>${p80} = 80% GMV</strong> Â· Total: ${fmt(total,'currency')}</div>
       <div style="position:relative;height:${h}px"><canvas id="pc-${ci}"></canvas></div>`;
     chartsEl.appendChild(div);
     setTimeout(()=>{
       const ctx=document.getElementById('pc-'+ci);if(!ctx)return;
-      new Chart(ctx,{data:{labels:sorted.map(b=>b.name.length>20?b.name.slice(0,20)+'…':b.name),datasets:[
+      new Chart(ctx,{data:{labels:sorted.map(b=>b.name.length>20?b.name.slice(0,20)+'â¦':b.name),datasets:[
         {type:'bar',label:'GMV MXN',data:sorted.map(b=>b.gmv),backgroundColor:sorted.map((_,i)=>i<p80?color+'cc':'#bdc3c7aa'),borderRadius:3,yAxisID:'y'},
         {type:'line',label:'% Acum',data:cumPcts,borderColor:'#2980b9',borderWidth:2,pointRadius:2,pointBackgroundColor:'#2980b9',fill:false,yAxisID:'y2',tension:0}
       ]},options:{indexAxis:'y',responsive:true,maintainAspectRatio:false,
@@ -547,9 +550,9 @@ function buildPareto(){
 }
 function scrollToKam(e){const el=document.getElementById('kam-'+e.replace(/[@.]/g,'_'));if(el)el.scrollIntoView({behavior:'smooth',block:'start'});}
 
-// ══════════════════════════════════
+// ââââââââââââââââââââââââââââââââââ
 // INIT (runs after data fetch)
-// ══════════════════════════════════
+// ââââââââââââââââââââââââââââââââââ
 function _runInit(){
   const wc=_META.wtd_curr||['2026-05-18','2026-05-23'],wp=_META.wtd_prev||['2026-05-11','2026-05-16'];const wtdC=filter(wc[0],wc[1]),wtdP=filter(wp[0],wp[1]);
 
@@ -584,8 +587,8 @@ fetch(_DATA_URL)
   })
   .catch(e=>{
     document.body.innerHTML='<div style="padding:40px;font-family:sans-serif;color:#e74c3c">'+
-      '<h2>⚠️ Error cargando datos</h2><p>'+e.message+'</p>'+
-      '<p>Verifica que <code>monitor_data.json</code> esté en el mismo directorio.</p></div>';
+      '<h2>â ï¸ Error cargando datos</h2><p>'+e.message+'</p>'+
+      '<p>Verifica que <code>monitor_data.json</code> estÃ© en el mismo directorio.</p></div>';
   });
 </script>
 </body>
