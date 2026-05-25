@@ -538,7 +538,7 @@ function buildPareto(){
     const div=document.createElement('div');
     div.className='pareto-chart-card';
     div.id='kam-'+email.replace(/[@.]/g,'_');
-    div.innerHTML<`<h3 style="color:${color}">${kam.nombre.split(' ').map(w=>w[0]+w.slice(1).toLowerCase()).join(' ')}</h3>
+    div.innerHTML=`<h3 style="color:${color}">${kam.nombre.split(' ').map(w=>w[0]+w.slice(1).toLowerCase()).join(' ')}</h3>
       <div class="meta">${email} · ${sorted.length} marcas · <strong>${p80} = 80% GMV</strong> · Total: ${fmt(total,'currency')}</div>
       <div style="position:relative;height:${h}px"><canvas id="pc-${ci}"></canvas></div>`;
     chartsEl.appendChild(div);
@@ -563,4 +563,50 @@ function scrollToKam(e){const el=document.getElementById('kam-'+e.replace(/[@.]/
 function _runInit(){
   const wc=_META.wtd_curr||['2026-05-18','2026-05-23'],wp=_META.wtd_prev||['2026-05-11','2026-05-16'];const wtdC=filter(wc[0],wc[1]),wtdP=filter(wp[0],wp[1]);
 
-  renderKPIs('wtd-kpis',wtdC,wtdP)
+  renderKPIs('wtd-kpis',wtdC,wtdP);
+
+  barCompare('wc-orders',wtdC,wtdP,'ORDERS','number');
+  barCompare('wc-gmv',   wtdC,wtdP,'GMV_MXN','currency');
+  barCompare('wc-cvr',   wtdC,wtdP,'CVR_PCT','pct');
+  barCompare('wc-cancel',wtdC,wtdP,'CANCEL_RATE_PCT','pct');
+  initKAMPills();
+  renderBrandTable();
+
+  // Dynamic header counters
+  const elDias=document.getElementById('hdr-dias');
+  const elKams=document.getElementById('hdr-kams');
+  const elMarcas=document.getElementById('hdr-marcas');
+  const elUpd=document.getElementById('hdr-updated');
+  if(elDias) elDias.textContent=DATA.length;
+  if(elKams) elKams.textContent=[...new Set(PARETO_DATA.map(r=>r.KAM_EMAIL))].length;
+  if(elMarcas) elMarcas.textContent=PARETO_DATA.length;
+  if(elUpd && _META.updated) elUpd.textContent=_META.updated;
+}
+
+// Fetch data then init
+fetch(_DATA_URL)
+  .then(r=>r.json())
+  .then(d=>{
+    DATA=d.daily||[];
+    PARETO_DATA=d.pareto||[];
+    WTD_BRANDS=d.wtd||[];
+    MTD_BRANDS=PARETO_DATA;
+    _META=d.meta||{};
+    // Patch date ranges from meta if present
+    if(_META.wtd_curr) window._WTD_C=_META.wtd_curr;
+    if(_META.mtd_curr) window._MTD_C=_META.mtd_curr;
+    _runInit();
+    // Auto-show wtd tab
+    const wtdBtn=document.querySelector('.tab');
+    if(wtdBtn && !Object.keys(_tabInited).length){
+      _tabInited['wtd']=true;
+    }
+  })
+  .catch(e=>{
+    document.body.innerHTML='<div style="padding:40px;font-family:sans-serif;color:#e74c3c">'+
+      '<h2>⚠️ Error cargando datos</h2><p>'+e.message+'</p>'+
+      '<p>Verifica que <code>monitor_data.json</code> esté en el mismo directorio.</p></div>';
+  });
+</script>
+</body>
+</html>
