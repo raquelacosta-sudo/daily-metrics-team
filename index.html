@@ -1,0 +1,590 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1.0">
+<title>Monitor KPIs — Raquel Acosta · Rappi MX</title>
+<script src="https://cdn.jsdelivr.net/npm/chart.js@4.5.1" integrity="sha384-jb8JQMbMoBUzgWatfe6COACi2ljcDdZQ2OxczGA3bGNeWe+6DChMTBJemed7ZnvJ" crossorigin="anonymous"></script>
+<style>
+*{margin:0;padding:0;box-sizing:border-box}
+body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,sans-serif;background:#f0f2f5;color:#1a1a2e}
+.header{background:linear-gradient(135deg,#ff441f,#c0392b);color:#fff;padding:14px 24px;display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:10px;box-shadow:0 2px 12px rgba(255,68,31,.35)}
+.header h1{font-size:17px;font-weight:700}
+.header-meta{font-size:11px;opacity:.85;text-align:right;line-height:1.6}
+.tabs{display:flex;background:#fff;border-bottom:2px solid #e8eaed;padding:0 20px;box-shadow:0 1px 4px rgba(0,0,0,.06);overflow-x:auto;gap:2px}
+.tab{padding:13px 18px;cursor:pointer;font-size:12px;font-weight:600;color:#666;border-bottom:3px solid transparent;margin-bottom:-2px;transition:all .2s;white-space:nowrap;flex-shrink:0}
+.tab:hover{color:#ff441f}.tab.active{color:#ff441f;border-bottom-color:#ff441f}
+.container{max-width:1440px;margin:0 auto;padding:16px 20px}
+.tab-panel{display:none}.tab-panel.active{display:block}
+
+/* KPIs */
+.kpi-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(168px,1fr));gap:10px;margin-bottom:18px}
+.kpi-card{background:#fff;border-radius:10px;padding:14px 16px;box-shadow:0 1px 4px rgba(0,0,0,.08);border-left:4px solid #e8eaed;transition:transform .15s}
+.kpi-card:hover{transform:translateY(-2px)}
+.kpi-card.red{border-left-color:#e74c3c;background:#fff8f7}
+.kpi-card.orange{border-left-color:#f39c12;background:#fffdf0}
+.kpi-card.green{border-left-color:#27ae60;background:#f6fff8}
+.kpi-card.neutral{border-left-color:#bdc3c7}
+.kpi-label{font-size:10px;text-transform:uppercase;letter-spacing:.6px;color:#888;margin-bottom:3px;font-weight:600}
+.kpi-value{font-size:20px;font-weight:800;color:#1a1a2e;line-height:1.2}
+.kpi-sub{font-size:10px;color:#aaa;margin-top:2px}
+.kpi-delta{font-size:11px;font-weight:700;margin-top:7px;padding:3px 8px;border-radius:20px;display:inline-block}
+.kpi-delta.pos{color:#27ae60;background:#e8f8ee}
+.kpi-delta.neg{color:#e74c3c;background:#fef0ee}
+.kpi-delta.warn{color:#f39c12;background:#fff8e6}
+.kpi-delta.neutral-d{color:#888;background:#f0f0f0}
+
+/* Banners */
+.period-banner{background:#fff;border-radius:8px;padding:9px 16px;margin-bottom:14px;font-size:11px;color:#555;display:flex;gap:20px;flex-wrap:wrap;box-shadow:0 1px 3px rgba(0,0,0,.06)}
+.period-banner strong{color:#1a1a2e}
+.legend{display:flex;gap:12px;margin-bottom:14px;flex-wrap:wrap;align-items:center}
+.legend-item{display:flex;align-items:center;gap:5px;font-size:10px;color:#666}
+.legend-dot{width:9px;height:9px;border-radius:50%;flex-shrink:0}
+
+/* Charts */
+.charts-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(380px,1fr));gap:14px;margin-top:16px}
+.chart-card{background:#fff;border-radius:10px;padding:18px;box-shadow:0 1px 4px rgba(0,0,0,.08)}
+.chart-title{font-size:12px;font-weight:700;color:#1a1a2e;margin-bottom:12px;display:flex;justify-content:space-between;align-items:center}
+.chart-title small{font-size:10px;color:#888;font-weight:400}
+.chart-wrap{position:relative;height:185px}
+.section-title{font-size:12px;font-weight:700;color:#1a1a2e;margin:18px 0 10px;display:flex;align-items:center;gap:8px;text-transform:uppercase;letter-spacing:.5px}
+.section-title::after{content:'';flex:1;height:1px;background:#e8eaed}
+
+/* ═══════════════════════════════
+   BRAND ALERTS TAB
+═══════════════════════════════ */
+.brand-toolbar{background:#fff;border-radius:10px;padding:14px 18px;margin-bottom:14px;box-shadow:0 1px 4px rgba(0,0,0,.08);display:flex;flex-wrap:wrap;gap:12px;align-items:center}
+.brand-toolbar label{font-size:11px;font-weight:600;color:#555}
+.toggle-group{display:flex;gap:0;border-radius:20px;overflow:hidden;border:1.5px solid #ff441f}
+.toggle-btn{padding:5px 16px;font-size:11px;font-weight:600;cursor:pointer;background:#fff;color:#ff441f;border:none;transition:all .15s}
+.toggle-btn.active{background:#ff441f;color:#fff}
+.kam-pills{display:flex;flex-wrap:wrap;gap:6px}
+.kam-pill{padding:4px 12px;border-radius:20px;font-size:11px;font-weight:600;cursor:pointer;border:1.5px solid #e0e0e0;background:#fff;color:#555;transition:all .15s}
+.kam-pill.active{border-color:#ff441f;background:#ff441f;color:#fff}
+.sort-select{font-size:11px;padding:4px 10px;border-radius:6px;border:1.5px solid #e0e0e0;background:#fff;color:#555;cursor:pointer}
+
+/* Brand table */
+.brand-table-wrap{background:#fff;border-radius:10px;box-shadow:0 1px 4px rgba(0,0,0,.08);overflow:hidden}
+.brand-table{width:100%;border-collapse:collapse;font-size:11px}
+.brand-table thead tr{background:#1a1a2e;color:#fff}
+.brand-table th{padding:9px 12px;text-align:left;font-weight:600;font-size:10px;text-transform:uppercase;letter-spacing:.4px;white-space:nowrap;cursor:pointer;user-select:none}
+.brand-table th:hover{background:#2c3e50}
+.brand-table td{padding:8px 12px;border-bottom:1px solid #f5f5f5;vertical-align:middle}
+.brand-table tr:hover td{background:#fafafa}
+.brand-table tr.kam-group td{background:#f8f9fa;font-weight:700;color:#1a1a2e;font-size:10px;text-transform:uppercase;letter-spacing:.5px;padding:6px 12px;border-bottom:1px solid #e8eaed}
+.brand-name{font-weight:600;color:#1a1a2e;max-width:200px}
+.badge{display:inline-block;padding:2px 7px;border-radius:10px;font-size:10px;font-weight:700}
+.badge.red{background:#fef0ee;color:#e74c3c}
+.badge.orange{background:#fff8e6;color:#f39c12}
+.badge.green{background:#e8f8ee;color:#27ae60}
+.badge.neutral{background:#f5f5f5;color:#888}
+.gmv-bar-wrap{display:flex;align-items:center;gap:6px}
+.gmv-bar{height:6px;border-radius:3px;background:#ff441f;min-width:2px}
+
+/* Summary stats */
+.alert-summary{display:grid;grid-template-columns:repeat(auto-fill,minmax(160px,1fr));gap:10px;margin-bottom:14px}
+.alert-stat{background:#fff;border-radius:10px;padding:14px 16px;box-shadow:0 1px 4px rgba(0,0,0,.08);text-align:center}
+.alert-stat .num{font-size:28px;font-weight:800}
+.alert-stat .num.red{color:#e74c3c}
+.alert-stat .num.orange{color:#f39c12}
+.alert-stat .num.green{color:#27ae60}
+.alert-stat .lbl{font-size:10px;color:#888;margin-top:2px;text-transform:uppercase;letter-spacing:.4px}
+
+/* Pareto */
+.pareto-summary{display:grid;grid-template-columns:repeat(auto-fill,minmax(210px,1fr));gap:10px;margin-bottom:16px}
+.kam-card{background:#fff;border-radius:10px;padding:14px;box-shadow:0 1px 4px rgba(0,0,0,.08);border-top:3px solid #ff441f;cursor:pointer;transition:transform .15s}
+.kam-card:hover{transform:translateY(-2px)}
+.kam-name{font-size:12px;font-weight:700;color:#1a1a2e}
+.kam-email{font-size:10px;color:#aaa;margin-bottom:6px}
+.kam-stats{font-size:11px;color:#555;display:flex;flex-direction:column;gap:2px}
+.kam-pareto{margin-top:7px;font-size:11px;font-weight:700;color:#ff441f}
+.pareto-charts-section{display:flex;flex-direction:column;gap:16px}
+.pareto-chart-card{background:#fff;border-radius:10px;padding:18px;box-shadow:0 1px 4px rgba(0,0,0,.08)}
+.pareto-chart-card h3{font-size:13px;font-weight:700;margin-bottom:3px}
+.pareto-chart-card .meta{font-size:11px;color:#888;margin-bottom:14px}
+</style>
+</head>
+<body>
+
+<div class="header">
+  <div>
+    <h1>📊 Monitor KPIs Equipo — Raquel Acosta · Rappi MX</h1>
+    <div style="font-size:10px;opacity:.8;margin-top:2px">Datos reales Snowflake · 874 días · 6 KAMs · 182 marcas</div>
+  </div>
+  <div class="header-meta">
+    <div>Actualizado: <strong>23 May 2026</strong></div>
+    <div>Alertas Slack: <strong>#cdmx-rest-alertas-comerciales</strong></div>
+  </div>
+</div>
+
+<div class="tabs">
+  <div class="tab active"  onclick="showTab('wtd',this)">⚡ WTD Equipo</div>
+  <div class="tab"         onclick="showTab('mtd',this)">📅 MTD Equipo</div>
+  <div class="tab"         onclick="showTab('brands',this)">🔔 Alertas por Marca</div>
+  <div class="tab"         onclick="showTab('trends',this)">📈 Tendencias 90d</div>
+  <div class="tab"         onclick="showTab('pareto',this)">🎯 Pareto por KAM</div>
+</div>
+
+<!-- ══════════ WTD ══════════ -->
+<div id="tab-wtd" class="tab-panel active container">
+  <div class="period-banner">
+    <span>📆 Semana actual: <strong>Lun 18 May → Sáb 23 May 2026</strong> (6 días)</span>
+    <span>🔁 vs semana anterior: <strong>Lun 11 May → Sáb 16 May 2026</strong></span>
+  </div>
+  <div class="legend">
+    <span style="font-size:10px;font-weight:600;color:#555">Alertas:</span>
+    <div class="legend-item"><div class="legend-dot" style="background:#e74c3c"></div>Caída crítica &gt;15%</div>
+    <div class="legend-item"><div class="legend-dot" style="background:#f39c12"></div>Caída moderada 5–15%</div>
+    <div class="legend-item"><div class="legend-dot" style="background:#27ae60"></div>Estable / mejora</div>
+  </div>
+  <div id="wtd-kpis" class="kpi-grid"></div>
+  <div class="section-title">Detalle diario</div>
+  <div class="charts-grid">
+    <div class="chart-card"><div class="chart-title">Órdenes <small>actual vs sem. ant.</small></div><div class="chart-wrap"><canvas id="wc-orders"></canvas></div></div>
+    <div class="chart-card"><div class="chart-title">GMV MXN <small>actual vs sem. ant.</small></div><div class="chart-wrap"><canvas id="wc-gmv"></canvas></div></div>
+    <div class="chart-card"><div class="chart-title">CVR % <small>actual vs sem. ant.</small></div><div class="chart-wrap"><canvas id="wc-cvr"></canvas></div></div>
+    <div class="chart-card"><div class="chart-title">Cancel Rate % <small>actual vs sem. ant.</small></div><div class="chart-wrap"><canvas id="wc-cancel"></canvas></div></div>
+  </div>
+</div>
+
+<!-- ══════════ MTD ══════════ -->
+<div id="tab-mtd" class="tab-panel container">
+  <div class="period-banner">
+    <span>📆 Mes actual: <strong>1 May → 23 May 2026</strong> (23 días)</span>
+    <span>🔁 vs mismo periodo mes anterior: <strong>1 Abr → 23 Abr 2026</strong></span>
+  </div>
+  <div class="legend">
+    <span style="font-size:10px;font-weight:600;color:#555">Alertas:</span>
+    <div class="legend-item"><div class="legend-dot" style="background:#e74c3c"></div>Caída crítica &gt;15%</div>
+    <div class="legend-item"><div class="legend-dot" style="background:#f39c12"></div>Caída moderada 5–15%</div>
+    <div class="legend-item"><div class="legend-dot" style="background:#27ae60"></div>Estable / mejora</div>
+  </div>
+  <div id="mtd-kpis" class="kpi-grid"></div>
+  <div class="section-title">Acumulado mensual</div>
+  <div class="charts-grid">
+    <div class="chart-card"><div class="chart-title">GMV acumulado <small>May vs Abr día a día</small></div><div class="chart-wrap"><canvas id="mc-gmv"></canvas></div></div>
+    <div class="chart-card"><div class="chart-title">Órdenes acumuladas <small>May vs Abr</small></div><div class="chart-wrap"><canvas id="mc-orders"></canvas></div></div>
+  </div>
+</div>
+
+<!-- ══════════ ALERTAS POR MARCA ══════════ -->
+<div id="tab-brands" class="tab-panel container">
+  <div class="brand-toolbar">
+    <div>
+      <label>Vista</label><br>
+      <div class="toggle-group" style="margin-top:4px">
+        <button class="toggle-btn active" id="btn-wtd-brand" onclick="setBrandView('wtd')">WTD</button>
+        <button class="toggle-btn" id="btn-mtd-brand" onclick="setBrandView('mtd')">MTD</button>
+      </div>
+    </div>
+    <div>
+      <label>KAM</label><br>
+      <div class="kam-pills" id="kam-filter-pills" style="margin-top:4px"></div>
+    </div>
+    <div>
+      <label>Ordenar por</label><br>
+      <select class="sort-select" id="brand-sort" onchange="renderBrandTable()" style="margin-top:4px">
+        <option value="gmv_delta">GMV Δ% (mayor caída)</option>
+        <option value="gmv_curr">GMV actual (mayor)</option>
+        <option value="orders_delta">Órdenes Δ%</option>
+        <option value="brand_name">Nombre marca</option>
+      </select>
+    </div>
+    <div style="margin-left:auto;font-size:10px;color:#888;line-height:1.6">
+      🔴 Caída crítica &gt;15% &nbsp;|&nbsp; 🟠 Moderada 5–15% &nbsp;|&nbsp; 🟢 Estable/sube<br>
+      WTD: Lun 18–Sáb 23 Mayo vs Lun 11–Sáb 16 Mayo &nbsp;|&nbsp; MTD: 1–23 Mayo vs 1–23 Abr
+    </div>
+  </div>
+
+  <div id="brand-summary" class="alert-summary"></div>
+  <div class="brand-table-wrap">
+    <table class="brand-table" id="brand-table">
+      <thead><tr>
+        <th onclick="sortBy('brand_name')">Marca ↕</th>
+        <th onclick="sortBy('kam_nombre')">KAM ↕</th>
+        <th onclick="sortBy('gmv_curr')">GMV Actual ↕</th>
+        <th onclick="sortBy('gmv_delta')">GMV Δ% ↕</th>
+        <th onclick="sortBy('orders_curr')">Órdenes ↕</th>
+        <th onclick="sortBy('orders_delta')">Órdenes Δ% ↕</th>
+        <th onclick="sortBy('cancel_curr')">Cancel % ↕</th>
+        <th onclick="sortBy('defect_curr')">Defect % ↕</th>
+        <th>Alerta</th>
+      </tr></thead>
+      <tbody id="brand-tbody"></tbody>
+    </table>
+  </div>
+</div>
+
+<!-- ══════════ TENDENCIAS ══════════ -->
+<div id="tab-trends" class="tab-panel container">
+  <div class="period-banner">
+    <span>📆 Últimos 90 días: <strong>23 Feb → 23 May 2026</strong> · con MA7</span>
+  </div>
+  <div class="charts-grid" style="grid-template-columns:repeat(auto-fill,minmax(420px,1fr))">
+    <div class="chart-card"><div class="chart-title">Órdenes + MA7</div><div class="chart-wrap"><canvas id="t-orders"></canvas></div></div>
+    <div class="chart-card"><div class="chart-title">GMV MXN + MA7</div><div class="chart-wrap"><canvas id="t-gmv"></canvas></div></div>
+    <div class="chart-card"><div class="chart-title">AOV MXN</div><div class="chart-wrap"><canvas id="t-aov"></canvas></div></div>
+    <div class="chart-card"><div class="chart-title">Traffic SS + MA7</div><div class="chart-wrap"><canvas id="t-traffic"></canvas></div></div>
+    <div class="chart-card"><div class="chart-title">CVR %</div><div class="chart-wrap"><canvas id="t-cvr"></canvas></div></div>
+    <div class="chart-card"><div class="chart-title">Cancel % / Defect %</div><div class="chart-wrap"><canvas id="t-ops"></canvas></div></div>
+    <div class="chart-card"><div class="chart-title">Revenue MXN</div><div class="chart-wrap"><canvas id="t-revenue"></canvas></div></div>
+    <div class="chart-card"><div class="chart-title">Comisión % / MKD %</div><div class="chart-wrap"><canvas id="t-pnl"></canvas></div></div>
+  </div>
+</div>
+
+<!-- ══════════ PARETO ══════════ -->
+<div id="tab-pareto" class="tab-panel container">
+  <div class="period-banner">
+    <span>📆 <strong>1 May → 23 May 2026</strong> · Pareto 80% GMV por KAM</span>
+    <span>Barras <span style="color:#ff441f;font-weight:700">rojas</span> = Pareto · <span style="color:#bdc3c7;font-weight:700">grises</span> = cola larga</span>
+  </div>
+  <div class="section-title">Resumen KAMs</div>
+  <div id="pareto-summary" class="pareto-summary"></div>
+  <div class="section-title">Detalle por KAM</div>
+  <div id="pareto-charts" class="pareto-charts-section"></div>
+</div>
+
+<script>
+// ══════════════════════════════════
+// DATOS
+// ══════════════════════════════════
+
+
+
+
+// MTD brands from pareto (already MTD)
+const MTD_BRANDS = PARETO_DATA;
+
+// ══════════════════════════════════
+// UTILS
+// ══════════════════════════════════
+function fmt(v, type) {
+  if (v===null||v===undefined||isNaN(v)) return '—';
+  if (type==='currency') {
+    if (Math.abs(v)>=1e6) return '$'+(v/1e6).toFixed(1)+'M';
+    if (Math.abs(v)>=1e3) return '$'+(v/1e3).toFixed(0)+'K';
+    return '$'+v.toFixed(0);
+  }
+  if (type==='pct') return v.toFixed(1)+'%';
+  if (Math.abs(v)>=1e6) return (v/1e6).toFixed(1)+'M';
+  if (Math.abs(v)>=1e3) return (v/1e3).toFixed(0)+'K';
+  return Math.round(v).toLocaleString('es-MX');
+}
+function pct(c,p){return(!p||p===0)?null:((c-p)/Math.abs(p))*100;}
+const _DATA_URL = './monitor_data.json';
+let DATA=[], PARETO_DATA=[], WTD_BRANDS=[], _META={};
+function filter(s,e){return DATA.filter(r=>r.FECHA>=s&&r.FECHA<=e);}
+function sumM(recs,col){return recs.reduce((a,r)=>a+(r[col]||0),0);}
+function avgM(recs,col){const v=recs.filter(r=>r[col]&&r[col]!==0).map(r=>r[col]);return v.length?v.reduce((a,b)=>a+b,0)/v.length:0;}
+function ma7(arr){return arr.map((v,i)=>{const s=arr.slice(Math.max(0,i-6),i+1);return s.reduce((a,b)=>a+b,0)/s.length;});}
+const _tabInited={};
+function showTab(name,el){
+  document.querySelectorAll('.tab-panel').forEach(p=>p.classList.remove('active'));
+  document.querySelectorAll('.tab').forEach(t=>t.classList.remove('active'));
+  document.getElementById('tab-'+name).classList.add('active');
+  el.classList.add('active');
+  if(!_tabInited[name]){_tabInited[name]=true;_initTab(name);}
+}
+function _initTab(name){
+  if(name==='mtd'){
+      renderKPIs('mtd-kpis',mtdC,mtdP);
+    lineCumul('mc-gmv',mtdC,mtdP,'GMV_MXN','currency');
+    }
+  if(name==='trends'){
+    const t90=filter(_META.t90_start||'2026-02-23',_META.t90_end||'2026-05-23');
+    trendLine('t-orders',t90,'ORDERS','number',true);
+    trendLine('t-gmv',t90,'GMV_MXN','currency',true);
+    trendLine('t-aov',t90,'AOV_MXN','currency',false);
+      trendLine('t-cvr',t90,'CVR_PCT','pct',true);
+    trendLine('t-ops',t90,'CANCEL_RATE_PCT','pct',false,{col:'DEFECT_RATE_PCT',label:'Defect %',color:'#e74c3c'});
+      trendLine('t-pnl',t90,'COMMISSION_PCT','pct',false,{col:'MKD_PCT_GMV',label:'MKD %',color:'#8e44ad'});
+  }
+  if(name==='pareto'){buildPareto();}
+}
+
+// ══════════════════════════════════
+// TEAM KPI METRICS
+// ══════════════════════════════════
+const METRICS=[
+  {col:'ORDERS',             label:'Órdenes',          agg:'sum',fmt:'number',  inv:false,w:5, c:15},
+  {col:'GMV_MXN',            label:'GMV MXN',           agg:'sum',fmt:'currency',inv:false,w:5, c:15},
+  {col:'SALES_USD',          label:'Sales USD',         agg:'sum',fmt:'currency',inv:false,w:5, c:15},
+  {col:'AOV_MXN',            label:'AOV MXN',           agg:'avg',fmt:'currency',inv:false,w:5, c:10},
+  {col:'TIENDAS_CON_VENTA',  label:'Tiendas c/venta',   agg:'sum',fmt:'number',  inv:false,w:5, c:10},
+  {col:'TRAFFIC_SS',         label:'Traffic SS',        agg:'sum',fmt:'number',  inv:false,w:5, c:15},
+  {col:'CVR_PCT',            label:'CVR %',             agg:'avg',fmt:'pct',     inv:false,w:5, c:10},
+  {col:'REVENUE_MXN',        label:'Revenue MXN',       agg:'sum',fmt:'currency',inv:false,w:10,c:20},
+  {col:'COMMISSION_PCT',     label:'Comisión %',        agg:'avg',fmt:'pct',     inv:false,w:5, c:10},
+  {col:'CANCEL_RATE_PCT',    label:'Cancel Rate %',     agg:'avg',fmt:'pct',     inv:true, w:10,c:20},
+  {col:'DEFECT_RATE_PCT',    label:'Defect Rate %',     agg:'avg',fmt:'pct',     inv:true, w:5, c:10},
+  {col:'MKD_PCT_GMV',        label:'MKD % GMV',         agg:'avg',fmt:'pct',     inv:true, w:10,c:20},
+  {col:'TOTAL_RAPPI_SPEND_MXN',label:'Spend MXN',      agg:'sum',fmt:'currency',inv:false,w:10,c:20},
+];
+function getVal(recs,m){return m.agg==='sum'?sumM(recs,m.col):avgM(recs,m.col);}
+function cardClass(d,m){if(d===null)return 'neutral';const bad=m.inv?d:-d;return bad>m.c?'red':bad>m.w?'orange':'green';}
+function deltaClass(d,m){if(d===null)return 'neutral-d';if(m.inv)return d>m.c?'neg':d>m.w?'warn':'pos';return d<-m.c?'neg':d<-m.w?'warn':'pos';}
+function renderKPIs(id,curr,prev){
+  const el=document.getElementById(id);
+  el.innerHTML=METRICS.map(m=>{
+    const c=getVal(curr,m),p=getVal(prev,m),d=pct(c,p);
+    const cc=cardClass(d,m),dc=deltaClass(d,m);
+    const sign=d!==null&&d>=0?'+':'';
+    const arr=d===null?'':m.inv?(d>0?'▲ ':'▼ '):(d>=0?'▲ ':'▼ ');
+    return `<div class="kpi-card ${cc}">
+      <div class="kpi-label">${m.label}</div>
+      <div class="kpi-value">${fmt(c,m.fmt)}</div>
+      <div class="kpi-sub">prev: ${fmt(p,m.fmt)}</div>
+      <div class="kpi-delta ${dc}">${d!==null?arr+sign+d.toFixed(1)+'%':'—'}</div>
+    </div>`;
+  }).join('');
+}
+
+// ══════════════════════════════════
+// COMPARISON CHARTS
+// ══════════════════════════════════
+const DAYS=['Lun','Mar','Mié','Jue','Vie','Sáb','Dom'];
+function dayLbl(f){const d=new Date(f+'T12:00:00');return DAYS[d.getDay()===0?6:d.getDay()-1]+' '+d.getDate();}
+function barCompare(id,curr,prev,col,ft){
+  const ctx=document.getElementById(id);if(!ctx)return;
+  new Chart(ctx,{type:'bar',data:{
+    labels:curr.map(r=>dayLbl(r.FECHA)),
+    datasets:[
+      {label:'Actual',   data:curr.map(r=>r[col]||0),backgroundColor:'#ff441fcc',borderRadius:4},
+      {label:'Sem.ant.', data:prev.map(r=>r[col]||0),backgroundColor:'#bdc3c7aa',borderRadius:4}
+    ]},options:{responsive:true,maintainAspectRatio:false,
+    plugins:{legend:{position:'top',labels:{font:{size:10},usePointStyle:true}},
+      tooltip:{callbacks:{label:c=>c.dataset.label+': '+fmt(c.parsed.y,ft)}}},
+    scales:{x:{grid:{display:false},ticks:{font:{size:10}}},
+      y:{beginAtZero:true,ticks:{callback:v=>fmt(v,ft),font:{size:9}}}}}});
+}
+function lineCumul(id,curr,prev,col,ft){
+  const ctx=document.getElementById(id);if(!ctx)return;
+  let cc=0,cp=0;
+  new Chart(ctx,{type:'line',data:{
+    labels:curr.map((_,i)=>'Día '+(i+1)),
+    datasets:[
+      {label:'Mayo 2026',data:curr.map(r=>{cc+=(r[col]||0);return cc;}),borderColor:'#ff441f',backgroundColor:'#ff441f18',fill:true,tension:.3,borderWidth:2,pointRadius:1},
+      {label:'Abr 2026', data:prev.map(r=>{cp+=(r[col]||0);return cp;}),borderColor:'#bdc3c7',borderDash:[5,4],tension:.3,borderWidth:2,pointRadius:1,fill:false}
+    ]},options:{responsive:true,maintainAspectRatio:false,
+    plugins:{legend:{position:'top',labels:{font:{size:10},usePointStyle:true}},
+      tooltip:{callbacks:{label:c=>c.dataset.label+': '+fmt(c.parsed.y,ft)}}},
+    scales:{x:{grid:{display:false},ticks:{maxTicksLimit:10,font:{size:9}}},
+      y:{beginAtZero:true,ticks:{callback:v=>fmt(v,ft),font:{size:9}}}}}});
+}
+function trendLine(id,recs,col,ft,withMA,extra){
+  const ctx=document.getElementById(id);if(!ctx)return;
+  const labels=recs.map(r=>r.FECHA.slice(5));
+  const vals=recs.map(r=>r[col]||null);
+  const ds=[{label:col.replace(/_/g,' '),data:vals,borderColor:'#ff441f',backgroundColor:'#ff441f12',fill:true,tension:.25,borderWidth:1.5,pointRadius:0}];
+  if(withMA) ds.push({label:'MA7',data:ma7(vals.map(v=>v||0)),borderColor:'#1a1a2e',borderWidth:2,tension:.3,pointRadius:0,fill:false});
+  if(extra) ds.push({label:extra.label,data:recs.map(r=>r[extra.col]||null),borderColor:extra.color,borderWidth:1.5,tension:.25,pointRadius:0,fill:false});
+  new Chart(ctx,{type:'line',data:{labels,datasets:ds},options:{responsive:true,maintainAspectRatio:false,
+    plugins:{legend:{position:'top',labels:{font:{size:10},usePointStyle:true,padding:8}},
+      tooltip:{callbacks:{label:c=>c.dataset.label+': '+fmt(c.parsed.y,ft)}}},
+    scales:{x:{grid:{display:false},ticks:{maxTicksLimit:12,font:{size:9}}},
+      y:{ticks:{callback:v=>fmt(v,ft),font:{size:9}}}}}});
+}
+
+// ══════════════════════════════════
+// BRAND ALERTS
+// ══════════════════════════════════
+let brandView='wtd';
+let activeKAM='all';
+let brandSortCol='gmv_delta';
+let brandSortAsc=true;
+const KAM_COLORS=['#ff441f','#9b59b6','#2980b9','#27ae60','#f39c12','#1abc9c'];
+
+function setBrandView(v){
+  brandView=v;
+  document.getElementById('btn-wtd-brand').classList.toggle('active',v==='wtd');
+  document.getElementById('btn-mtd-brand').classList.toggle('active',v==='mtd');
+  renderBrandTable();
+}
+function sortBy(col){
+  if(brandSortCol===col) brandSortAsc=!brandSortAsc;
+  else{brandSortCol=col;brandSortAsc=col==='gmv_delta';}
+  renderBrandTable();
+}
+
+function getBrandData(){
+  const raw = brandView==='wtd' ? WTD_BRANDS : MTD_BRANDS.map(r=>({
+    KAM_NOMBRE:r.KAM_NOMBRE, KAM_EMAIL:r.KAM_EMAIL, BRAND_NAME:r.BRAND_NAME,
+    GMV_CURR:r.GMV_MXN, GMV_PREV:null, GMV_DELTA_PCT:null,
+    ORDERS_CURR:r.ORDERS, ORDERS_PREV:null, ORDERS_DELTA_PCT:null,
+    CANCEL_CURR_PCT:0, CANCEL_PREV_PCT:0, DEFECT_CURR_PCT:0, DEFECT_PREV_PCT:0
+  }));
+  return activeKAM==='all' ? raw : raw.filter(r=>r.KAM_EMAIL===activeKAM);
+}
+
+function alertLvl(delta){
+  if(delta===null) return 'neutral';
+  if(delta<=-15) return 'red';
+  if(delta<=-5)  return 'orange';
+  return 'green';
+}
+
+function renderBrandSummary(data){
+  const red=data.filter(r=>alertLvl(r.GMV_DELTA_PCT)==='red').length;
+  const orange=data.filter(r=>alertLvl(r.GMV_DELTA_PCT)==='orange').length;
+  const green=data.filter(r=>alertLvl(r.GMV_DELTA_PCT)==='green'&&r.GMV_DELTA_PCT!==null).length;
+  const totalGMV=data.reduce((s,r)=>s+(r.GMV_CURR||0),0);
+  document.getElementById('brand-summary').innerHTML=`
+    <div class="alert-stat"><div class="num red">${red}</div><div class="lbl">🔴 Caída crítica &gt;15%</div></div>
+    <div class="alert-stat"><div class="num orange">${orange}</div><div class="lbl">🟠 Caída moderada 5–15%</div></div>
+    <div class="alert-stat"><div class="num green">${green}</div><div class="lbl">🟢 Estable / subiendo</div></div>
+    <div class="alert-stat"><div class="num" style="color:#1a1a2e;font-size:22px">${fmt(totalGMV,'currency')}</div><div class="lbl">GMV Total ${brandView.toUpperCase()}</div></div>
+    <div class="alert-stat"><div class="num" style="color:#1a1a2e;font-size:22px">${data.length}</div><div class="lbl">Marcas activas</div></div>
+  `;
+}
+
+function renderBrandTable(){
+  let data=[...getBrandData()];
+  // Sort
+  const sortKey={brand_name:'BRAND_NAME',kam_nombre:'KAM_NOMBRE',gmv_curr:'GMV_CURR',gmv_delta:'GMV_DELTA_PCT',orders_curr:'ORDERS_CURR',orders_delta:'ORDERS_DELTA_PCT',cancel_curr:'CANCEL_CURR_PCT',defect_curr:'DEFECT_CURR_PCT'}[brandSortCol]||'GMV_DELTA_PCT';
+  data.sort((a,b)=>{
+    const av=a[sortKey],bv=b[sortKey];
+    if(av===null&&bv===null) return 0;
+    if(av===null) return 1; if(bv===null) return -1;
+    const cmp=av<bv?-1:av>bv?1:0;
+    return brandSortAsc?cmp:-cmp;
+  });
+  const maxGMV=Math.max(...data.map(r=>r.GMV_CURR||0));
+  renderBrandSummary(data);
+  const tbody=document.getElementById('brand-tbody');
+  tbody.innerHTML=data.map(r=>{
+    const lvl=alertLvl(r.GMV_DELTA_PCT);
+    const dClass={red:'neg',orange:'warn',green:'pos',neutral:'neutral-d'}[lvl];
+    const barW=maxGMV>0?Math.max(4,Math.round((r.GMV_CURR||0)/maxGMV*80)):4;
+    const gmvSign=r.GMV_DELTA_PCT!=null&&r.GMV_DELTA_PCT>=0?'+':'';
+    const ordSign=r.ORDERS_DELTA_PCT!=null&&r.ORDERS_DELTA_PCT>=0?'+':'';
+    return `<tr>
+      <td><div class="brand-name">${r.BRAND_NAME}</div></td>
+      <td style="font-size:10px;color:#888">${r.KAM_NOMBRE||''}</td>
+      <td><div class="gmv-bar-wrap"><div class="gmv-bar" style="width:${barW}px"></div><span>${fmt(r.GMV_CURR,'currency')}</span></div></td>
+      <td><span class="badge ${lvl}">${r.GMV_DELTA_PCT!=null?gmvSign+r.GMV_DELTA_PCT.toFixed(1)+'%':'—'}</span></td>
+      <td>${fmt(r.ORDERS_CURR,'number')}</td>
+      <td><span class="badge ${alertLvl(r.ORDERS_DELTA_PCT)}">${r.ORDERS_DELTA_PCT!=null?ordSign+r.ORDERS_DELTA_PCT.toFixed(1)+'%':'—'}</span></td>
+      <td>${r.CANCEL_CURR_PCT!=null?r.CANCEL_CURR_PCT.toFixed(1)+'%':'—'}</td>
+      <td>${r.DEFECT_CURR_PCT!=null?r.DEFECT_CURR_PCT.toFixed(1)+'%':'—'}</td>
+      <td><span style="font-size:16px">${lvl==='red'?'🔴':lvl==='orange'?'🟠':'🟢'}</span></td>
+    </tr>`;
+  }).join('');
+}
+
+function initKAMPills(){
+  const kams=[...new Set(WTD_BRANDS.map(r=>r.KAM_EMAIL))].sort();
+  const pills=document.getElementById('kam-filter-pills');
+  pills.innerHTML=`<button class="kam-pill active" onclick="setKAM('all',this)">Todos</button>`
+    +kams.map((k,i)=>{
+      const name=WTD_BRANDS.find(r=>r.KAM_EMAIL===k)?.KAM_NOMBRE||k;
+      const firstName=name.split(' ')[0];
+      return `<button class="kam-pill" onclick="setKAM('${k}',this)" style="border-color:${KAM_COLORS[i%KAM_COLORS.length]}">${firstName}</button>`;
+    }).join('');
+}
+function setKAM(email,el){
+  activeKAM=email;
+  document.querySelectorAll('.kam-pill').forEach(p=>p.classList.remove('active'));
+  el.classList.add('active');
+  renderBrandTable();
+}
+
+// ══════════════════════════════════
+// PARETO
+// ══════════════════════════════════
+function buildPareto(){
+  const kams={};
+  PARETO_DATA.forEach(r=>{
+    const k=r.KAM_EMAIL;
+    if(!kams[k]) kams[k]={nombre:r.KAM_NOMBRE,email:k,brands:[]};
+    kams[k].brands.push({name:r.BRAND_NAME,gmv:r.GMV_MXN,orders:r.ORDERS});
+  });
+  const kamList=Object.entries(kams).sort((a,b)=>b[1].brands.reduce((s,x)=>s+x.gmv,0)-a[1].brands.reduce((s,x)=>s+x.gmv,0));
+  const sumEl=document.getElementById('pareto-summary');
+  sumEl.innerHTML=kamList.map(([email,kam],ci)=>{
+    const sorted=[...kam.brands].sort((a,b)=>b.gmv-a.gmv);
+    const total=sorted.reduce((s,b)=>s+b.gmv,0);
+    let cum=0,p80=0;
+    sorted.forEach(b=>{cum+=b.gmv;if(cum/total<=0.805)p80++;});
+    return `<div class="kam-card" style="border-top-color:${KAM_COLORS[ci%KAM_COLORS.length]}" onclick="scrollToKam('${email}')">
+      <div class="kam-name">${kam.nombre.split(' ').map(w=>w[0]+w.slice(1).toLowerCase()).join(' ')}</div>
+      <div class="kam-email">${email}</div>
+      <div class="kam-stats">
+        <span>GMV MTD: <strong>${fmt(total,'currency')}</strong></span>
+        <span>Marcas: <strong>${sorted.length}</strong></span>
+      </div>
+      <div class="kam-pareto">🎯 ${p80} marcas = 80% GMV</div>
+    </div>`;
+  }).join('');
+  const chartsEl=document.getElementById('pareto-charts');
+  chartsEl.innerHTML='';
+  kamList.forEach(([email,kam],ci)=>{
+    const sorted=[...kam.brands].sort((a,b)=>b.gmv-a.gmv);
+    const total=sorted.reduce((s,b)=>s+b.gmv,0);
+    let cum=0,p80=0,cumPcts=[];
+    sorted.forEach(b=>{cum+=b.gmv;const p=(cum/total)*100;cumPcts.push(p);if(p<=80.5)p80++;});
+    const color=KAM_COLORS[ci%KAM_COLORS.length];
+    const h=Math.max(280,sorted.length*22);
+    const div=document.createElement('div');
+    div.className='pareto-chart-card';
+    div.id='kam-'+email.replace(/[@.]/g,'_');
+    div.innerHTML=`<h3 style="color:${color}">${kam.nombre.split(' ').map(w=>w[0]+w.slice(1).toLowerCase()).join(' ')}</h3>
+      <div class="meta">${email} · ${sorted.length} marcas · <strong>${p80} = 80% GMV</strong> · Total: ${fmt(total,'currency')}</div>
+      <div style="position:relative;height:${h}px"><canvas id="pc-${ci}"></canvas></div>`;
+    chartsEl.appendChild(div);
+    setTimeout(()=>{
+      const ctx=document.getElementById('pc-'+ci);if(!ctx)return;
+      new Chart(ctx,{data:{labels:sorted.map(b=>b.name.length>20?b.name.slice(0,20)+'…':b.name),datasets:[
+        {type:'bar',label:'GMV MXN',data:sorted.map(b=>b.gmv),backgroundColor:sorted.map((_,i)=>i<p80?color+'cc':'#bdc3c7aa'),borderRadius:3,yAxisID:'y'},
+        {type:'line',label:'% Acum',data:cumPcts,borderColor:'#2980b9',borderWidth:2,pointRadius:2,pointBackgroundColor:'#2980b9',fill:false,yAxisID:'y2',tension:0}
+      ]},options:{indexAxis:'y',responsive:true,maintainAspectRatio:false,
+        plugins:{legend:{position:'top',labels:{font:{size:10},usePointStyle:true}},
+          tooltip:{callbacks:{label:c=>c.datasetIndex===0?fmt(c.parsed.x,'currency'):(c.parsed.x.toFixed(1)+'%')}}},
+        scales:{x:{display:false},y:{grid:{display:false},ticks:{font:{size:9}}},
+          y2:{display:false,min:0,max:100}},layout:{padding:{right:50}}}});
+    },50+ci*80);
+  });
+}
+function scrollToKam(e){const el=document.getElementById('kam-'+e.replace(/[@.]/g,'_'));if(el)el.scrollIntoView({behavior:'smooth',block:'start'});}
+
+// ══════════════════════════════════
+// INIT (runs after data fetch)
+// ══════════════════════════════════
+function _runInit(){
+  const wc=_META.wtd_curr||['2026-05-18','2026-05-23'],wp=_META.wtd_prev||['2026-05-11','2026-05-16'];const wtdC=filter(wc[0],wc[1]),wtdP=filter(wp[0],wp[1]);
+
+  renderKPIs('wtd-kpis',wtdC,wtdP);
+
+  barCompare('wc-orders',wtdC,wtdP,'ORDERS','number');
+  barCompare('wc-gmv',   wtdC,wtdP,'GMV_MXN','currency');
+  barCompare('wc-cvr',   wtdC,wtdP,'CVR_PCT','pct');
+  barCompare('wc-cancel',wtdC,wtdP,'CANCEL_RATE_PCT','pct');
+  initKAMPills();
+  renderBrandTable();
+}
+
+// Fetch data then init
+fetch(_DATA_URL)
+  .then(r=>r.json())
+  .then(d=>{
+    DATA=d.daily||[];
+    PARETO_DATA=d.pareto||[];
+    WTD_BRANDS=d.wtd||[];
+    _META=d.meta||{};
+    // Patch date ranges from meta if present
+    if(_META.wtd_curr) window._WTD_C=_META.wtd_curr;
+    if(_META.mtd_curr) window._MTD_C=_META.mtd_curr;
+    _runInit();
+    // Auto-show wtd tab
+    const wtdBtn=document.querySelector('.tab');
+    if(wtdBtn && !Object.keys(_tabInited).length){
+      _tabInited['wtd']=true;
+    }
+  })
+  .catch(e=>{
+    document.body.innerHTML='<div style="padding:40px;font-family:sans-serif;color:#e74c3c">'+
+      '<h2>⚠️ Error cargando datos</h2><p>'+e.message+'</p>'+
+      '<p>Verifica que <code>monitor_data.json</code> esté en el mismo directorio.</p></div>';
+  });
+</script>
+</body>
+</html>
