@@ -419,8 +419,8 @@ function sortBy(col){
 function getBrandData(){
   const raw = brandView==='wtd' ? WTD_BRANDS : MTD_BRANDS.map(r=>({
     KAM_NOMBRE:r.KAM_NOMBRE, KAM_EMAIL:r.KAM_EMAIL, BRAND_NAME:r.BRAND_NAME,
-    GMV_CURR:r.GMV_MXN, GMV_PREV:null, GMV_DELTA_PCT:null,
-    ORDERS_CURR:r.ORDERS, ORDERS_PREV:null, ORDERS_DELTA_PCT:null,
+    GMV_CURR:r.GMV_MXN, GMV_PREV:r.GMV_PREV||null, GMV_DELTA_PCT:r.GMV_DELTA_PCT!=null?+r.GMV_DELTA_PCT:null,
+    ORDERS_CURR:r.ORDERS, ORDERS_PREV:r.ORDERS_PREV||null, ORDERS_DELTA_PCT:r.ORDERS_DELTA_PCT!=null?+r.ORDERS_DELTA_PCT:null,
     CANCEL_CURR_PCT:0, CANCEL_PREV_PCT:0, DEFECT_CURR_PCT:0, DEFECT_PREV_PCT:0
   }));
   return activeKAM==='all' ? raw : raw.filter(r=>r.KAM_EMAIL===activeKAM);
