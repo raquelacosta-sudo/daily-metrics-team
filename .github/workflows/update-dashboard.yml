@@ -1,0 +1,63 @@
+name: 📊 Actualizar Dashboard Diario
+
+on:
+  # Corre automáticamente a las 10:00 AM hora CDMX (16:00 UTC)
+  # La hoja de Sheets se actualiza a las 9 AM, este workflow corre 1h después
+  schedule:
+    - cron: '0 16 * * *'
+
+  # También permite ejecución manual desde la pestaña Actions en GitHub
+  workflow_dispatch:
+    inputs:
+      reason:
+        description: 'Motivo de actualización manual (opcional)'
+        required: false
+        default: 'actualización manual'
+
+jobs:
+  update:
+    name: Actualizar monitor_data.json
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write   # necesario para hacer commit al repo
+
+    steps:
+      # 1 – Checkout del repo
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      # 2 – Python
+      - name: Configurar Python 3.11
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+          cache: 'pip'
+
+      # 3 – Dependencias opcionales (solo si se usa cuenta de servicio)
+      - name: Instalar dependencias
+        run: |
+          pip install --quiet google-auth requests
+
+      # 4 – Ejecutar el script de actualización
+      - name: Actualizar datos desde Google Sheets
+        env:
+          # Si la hoja es privada: agrega este secreto en
+          # Settings → Secrets → Actions → New repository secret
+          # Nombre: GOOGLE_CREDENTIALS  Valor: contenido del JSON de la cuenta de servicio
+          GOOGLE_CREDENTIALS: ${{ secrets.GOOGLE_CREDENTIALS }}
+        run: python scripts/update_data.py
+
+      # 5 – Commit + push solo si hay cambios
+      - name: Commit y push si hay cambios
+        run: |
+          git config user.name  "github-actions[bot]"
+          git config user.email "github-actions[bot]@users.noreply.github.com"
+          git add monitor_data.json
+          if git diff --staged --quiet; then
+            echo "ℹ️  Sin cambios en monitor_data.json – nada que commitear"
+          else
+            FECHA=$(date -u +%Y-%m-%d)
+            git commit -m "data: auto-update $FECHA"
+            git push
+            echo "✅ Datos actualizados y publicados"
+          fi

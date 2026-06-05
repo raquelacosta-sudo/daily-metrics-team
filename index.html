@@ -112,7 +112,7 @@ body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,sans-serif;b
     <div style="font-size:10px;opacity:.8;margin-top:2px">Datos reales Snowflake · <span id="hdr-dias">…</span> días · <span id="hdr-kams">…</span> KAMs · <span id="hdr-marcas">…</span> marcas</div>
   </div>
   <div class="header-meta">
-    <div>Actualizado: <strong id="hdr-updated">…</strong></div>
+    <div>Actualizado: <strong id="hdr-updated">…</strong> <span id="hdr-stale" style="display:none;background:#f39c12;color:#fff;font-size:9px;padding:1px 6px;border-radius:10px;font-weight:700;margin-left:4px;vertical-align:middle">DESACTUALIZADO</span></div>
     <div>Alertas Slack: <strong>#cdmx-rest-alertas-comerciales</strong></div>
   </div>
 </div>
@@ -580,7 +580,18 @@ function _runInit(){
   if(elDias) elDias.textContent=DATA.length;
   if(elKams) elKams.textContent=[...new Set(PARETO_DATA.map(r=>r.KAM_EMAIL))].length;
   if(elMarcas) elMarcas.textContent=PARETO_DATA.length;
-  if(elUpd && _META.updated) elUpd.textContent=_META.updated;
+  if(elUpd && _META.updated){
+    elUpd.textContent=_META.updated;
+    // Mostrar badge "DESACTUALIZADO" si los datos tienen más de 1 día
+    const updDate=new Date(_META.updated+'T00:00:00');
+    const today=new Date(); today.setHours(0,0,0,0);
+    const diffDays=Math.floor((today-updDate)/(1000*60*60*24));
+    const staleEl=document.getElementById('hdr-stale');
+    if(staleEl && diffDays>1){
+      staleEl.textContent=diffDays+' días sin actualizar';
+      staleEl.style.display='inline';
+    }
+  }
 }
 
 // Fetch data then init
