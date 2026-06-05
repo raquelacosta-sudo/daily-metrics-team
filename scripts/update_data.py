@@ -274,6 +274,13 @@ def main():
     print(f"📥 Descargando datos de Google Sheets…")
     csv_text = get_csv()
 
+    # DEBUG: mostrar primeras líneas para diagnóstico
+    lines_preview = csv_text.split("\n")[:8]
+    print("── DEBUG primeras 8 líneas del CSV ──")
+    for i, l in enumerate(lines_preview):
+        print(f"  [{i}] {repr(l[:120])}")
+    print("─────────────────────────────────────")
+
     print("🔍 Procesando secciones…")
     daily_raw, wtd_raw, pareto_raw = parse_sections(csv_text)
     print(f"   Daily  : {len(daily_raw)} filas")
