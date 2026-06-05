@@ -31,12 +31,10 @@ jobs:
         uses: actions/setup-python@v5
         with:
           python-version: '3.11'
-          cache: 'pip'
 
-      # 3 – Dependencias opcionales (solo si se usa cuenta de servicio)
+      # 3 – Dependencias (google-auth + requests para cuenta de servicio)
       - name: Instalar dependencias
-        run: |
-          pip install --quiet google-auth requests
+        run: pip install --quiet -r scripts/requirements.txt
 
       # 4 – Ejecutar el script de actualización
       - name: Actualizar datos desde Google Sheets
