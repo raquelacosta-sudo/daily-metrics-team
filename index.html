@@ -60,7 +60,7 @@ body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,sans-serif;b
 .toggle-btn.active{background:#ff441f;color:#fff}
 .kam-pills{display:flex;flex-wrap:wrap;gap:6px}
 .kam-pill{padding:4px 12px;border-radius:20px;font-size:11px;font-weight:600;cursor:pointer;border:1.5px solid #e0e0e0;background:#fff;color:#555;transition:all .15s}
-.kam-pill.active{border-color:#ff441f;background:#ff441f;color:#fff}
+.kam-pill.active{background:#1a1a2e!important;color:#fff!important;border-color:#1a1a2e!important}
 .sort-select{font-size:11px;padding:4px 10px;border-radius:6px;border:1.5px solid #e0e0e0;background:#fff;color:#555;cursor:pointer}
 
 /* Brand table */
@@ -128,8 +128,8 @@ body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,sans-serif;b
 <!-- ══════════ WTD ══════════ -->
 <div id="tab-wtd" class="tab-panel active container">
   <div class="period-banner">
-    <span>📆 Semana actual: <strong>Lun 18 May → Sáb 23 May 2026</strong> (6 días)</span>
-    <span>🔁 vs semana anterior: <strong>Lun 11 May → Sáb 16 May 2026</strong></span>
+    <span id="wtd-period">📆 Semana actual: <strong>…</strong></span>
+    <span id="wtd-prev-period">🔁 vs semana anterior: <strong>…</strong></span>
   </div>
   <div class="legend">
     <span style="font-size:10px;font-weight:600;color:#555">Alertas:</span>
@@ -150,8 +150,8 @@ body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,sans-serif;b
 <!-- ══════════ MTD ══════════ -->
 <div id="tab-mtd" class="tab-panel container">
   <div class="period-banner">
-    <span>📆 Mes actual: <strong>1 May → 23 May 2026</strong> (23 días)</span>
-    <span>🔁 vs mismo periodo mes anterior: <strong>1 Abr → 23 Abr 2026</strong></span>
+    <span id="mtd-period">📆 Mes actual: <strong>…</strong></span>
+    <span id="mtd-prev-period">🔁 vs mismo periodo mes anterior: <strong>…</strong></span>
   </div>
   <div class="legend">
     <span style="font-size:10px;font-weight:600;color:#555">Alertas:</span>
@@ -192,7 +192,7 @@ body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,sans-serif;b
     </div>
     <div style="margin-left:auto;font-size:10px;color:#888;line-height:1.6">
       🔴 Caída crítica &gt;15% &nbsp;|&nbsp; 🟠 Moderada 5–15% &nbsp;|&nbsp; 🟢 Estable/sube<br>
-      WTD: Lun 18–Sáb 23 Mayo vs Lun 11–Sáb 16 Mayo &nbsp;|&nbsp; MTD: 1–23 Mayo vs 1–23 Abr
+      <span id="brand-dates-hint">WTD: … &nbsp;|&nbsp; MTD: …</span>
     </div>
   </div>
 
@@ -218,7 +218,7 @@ body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,sans-serif;b
 <!-- ══════════ TENDENCIAS ══════════ -->
 <div id="tab-trends" class="tab-panel container">
   <div class="period-banner">
-    <span>📆 Últimos 90 días: <strong>23 Feb → 23 May 2026</strong> · con MA7</span>
+    <span id="trends-period">📆 Últimos 90 días: <strong>…</strong> · con MA7</span>
   </div>
   <div class="charts-grid" style="grid-template-columns:repeat(auto-fill,minmax(420px,1fr))">
     <div class="chart-card"><div class="chart-title">Órdenes + MA7</div><div class="chart-wrap"><canvas id="t-orders"></canvas></div></div>
@@ -235,7 +235,7 @@ body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,sans-serif;b
 <!-- ══════════ PARETO ══════════ -->
 <div id="tab-pareto" class="tab-panel container">
   <div class="period-banner">
-    <span>📆 <strong>1 May → 23 May 2026</strong> · Pareto 80% GMV por KAM</span>
+    <span id="pareto-period">📆 <strong>…</strong> · Pareto 80% GMV por KAM</span>
     <span>Barras <span style="color:#ff441f;font-weight:700">rojas</span> = Pareto · <span style="color:#bdc3c7;font-weight:700">grises</span> = cola larga</span>
   </div>
   <div class="section-title">Resumen KAMs</div>
@@ -257,6 +257,15 @@ let DATA=[], PARETO_DATA=[], WTD_BRANDS=[], _META={};
 
 // MTD brands from pareto (already MTD)
 let MTD_BRANDS = [];
+
+// ══════════════════════════════════
+// DATE FORMATTING HELPERS
+// ══════════════════════════════════
+const _DOM=['Dom','Lun','Mar','Mié','Jue','Vie','Sáb'];
+const _MES=['Ene','Feb','Mar','Abr','May','Jun','Jul','Ago','Sep','Oct','Nov','Dic'];
+function fmtD(iso){const d=new Date(iso+'T12:00:00');return _DOM[d.getDay()]+' '+d.getDate()+' '+_MES[d.getMonth()];}
+function fmtMD(iso){const d=new Date(iso+'T12:00:00');return d.getDate()+' '+_MES[d.getMonth()];}
+function diffDays(a,b){return Math.round((new Date(b)-new Date(a))/86400000)+1;}
 
 // ══════════════════════════════════
 // UTILS
@@ -560,8 +569,50 @@ function scrollToKam(e){const el=document.getElementById('kam-'+e.replace(/[@.]/
 // ══════════════════════════════════
 // INIT (runs after data fetch)
 // ══════════════════════════════════
+function _updateBanners(){
+  const wc=_META.wtd_curr||[],wp=_META.wtd_prev||[];
+  const mc=_META.mtd_curr||[],mp=_META.mtd_prev||[];
+  const yr=wc.length?new Date(wc[1]+'T12:00:00').getFullYear():'';
+
+  if(wc.length===2){
+    const nd=diffDays(wc[0],wc[1]);
+    const el=document.getElementById('wtd-period');
+    if(el) el.innerHTML=`📆 Semana actual: <strong>${fmtD(wc[0])} → ${fmtD(wc[1])} ${yr}</strong> (${nd} día${nd!==1?'s':''})`;
+  }
+  if(wp.length===2){
+    const el=document.getElementById('wtd-prev-period');
+    if(el) el.innerHTML=`🔁 vs semana anterior: <strong>${fmtD(wp[0])} → ${fmtD(wp[1])} ${new Date(wp[1]+'T12:00:00').getFullYear()}</strong>`;
+  }
+  if(mc.length===2){
+    const nd=diffDays(mc[0],mc[1]);
+    const el=document.getElementById('mtd-period');
+    if(el) el.innerHTML=`📆 Mes actual: <strong>${fmtMD(mc[0])} → ${fmtMD(mc[1])} ${new Date(mc[1]+'T12:00:00').getFullYear()}</strong> (${nd} días)`;
+  }
+  if(mp.length===2){
+    const el=document.getElementById('mtd-prev-period');
+    if(el) el.innerHTML=`🔁 vs mismo periodo mes anterior: <strong>${fmtMD(mp[0])} → ${fmtMD(mp[1])} ${new Date(mp[1]+'T12:00:00').getFullYear()}</strong>`;
+  }
+  const t90s=_META.t90_start,t90e=_META.t90_end;
+  if(t90s&&t90e){
+    const el=document.getElementById('trends-period');
+    if(el) el.innerHTML=`📆 Últimos 90 días: <strong>${fmtD(t90s)} → ${fmtD(t90e)} ${new Date(t90e+'T12:00:00').getFullYear()}</strong> · con MA7`;
+  }
+  if(mc.length===2){
+    const el=document.getElementById('pareto-period');
+    if(el) el.innerHTML=`📆 <strong>${fmtMD(mc[0])} → ${fmtMD(mc[1])} ${new Date(mc[1]+'T12:00:00').getFullYear()}</strong> · Pareto 80% GMV por KAM`;
+  }
+  // Brand toolbar hint
+  const bh=document.getElementById('brand-dates-hint');
+  if(bh){
+    const wtdTxt=wc.length===2?`WTD: ${fmtD(wc[0])}–${fmtD(wc[1])} vs ${fmtD(wp[0])}–${fmtD(wp[1])}`:'WTD';
+    const mtdTxt=mc.length===2?`MTD: ${fmtMD(mc[0])}–${fmtMD(mc[1])} vs ${fmtMD(mp[0])}–${fmtMD(mp[1])}`:'MTD';
+    bh.textContent=wtdTxt+'  |  '+mtdTxt;
+  }
+}
+
 function _runInit(){
   const wc=_META.wtd_curr||['2026-05-18','2026-05-23'],wp=_META.wtd_prev||['2026-05-11','2026-05-16'];const wtdC=filter(wc[0],wc[1]),wtdP=filter(wp[0],wp[1]);
+  _updateBanners();
 
   renderKPIs('wtd-kpis',wtdC,wtdP);
 
